@@ -32,6 +32,9 @@ class MainViewController: UIViewController {
         //MARK: - Add items to display
         view.addSubview(mainTableView)
         updateViewConstraints()
+        APIManager.shared.getCompany { companies in
+            print (companies)
+        }
     }
 
     //MARK: - updateViewConstraints

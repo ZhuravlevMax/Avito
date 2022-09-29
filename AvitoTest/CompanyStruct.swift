@@ -8,7 +8,7 @@
 import Foundation
 
 // MARK: - AvitoStruct
-struct AvitoStruct: Codable {
+struct Companies: Codable {
     let company: Company
 }
 
@@ -29,3 +29,4 @@ struct Employee: Codable {
         case skills
     }
 }
+
