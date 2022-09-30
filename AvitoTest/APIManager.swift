@@ -7,13 +7,6 @@
 
 import Foundation
 
-enum HttpMethod:String{
-    case get = "get"
-    case post = "post"
-}
-
-
-
 class APIManager {
     
     static let shared = APIManager()

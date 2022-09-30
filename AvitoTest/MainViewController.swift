@@ -10,6 +10,23 @@ import SnapKit
 
 class MainViewController: UIViewController {
     
+    //MARK: - Creating variables
+    private var companyName: String = "" {
+        didSet {
+            DispatchQueue.main.async {
+                self.mainTableView.reloadData()
+            }
+        }
+    }
+    private var employees: [Employee] = [] {
+        didSet {
+            DispatchQueue.main.async {
+                self.mainTableView.reloadData()
+            }
+        }
+    }
+    private var skills: String?
+    
     //MARK: - Сreating items
     private lazy var mainTableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .grouped)
@@ -27,13 +44,16 @@ class MainViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = .gray
+        view.backgroundColor = .yellow
         
         //MARK: - Add items to display
         view.addSubview(mainTableView)
         updateViewConstraints()
-        APIManager.shared.getCompany { companies in
-            print (companies)
+        APIManager.shared.getCompany { [weak self] companies in
+            guard let self = self else {return}
+            self.companyName = companies.company.name
+            self.employees = companies.company.employees
+            
         }
     }
 
@@ -51,12 +71,15 @@ class MainViewController: UIViewController {
 
 extension MainViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        4
+        employees.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if let cell = mainTableView.dequeueReusableCell(withIdentifier: MainTableViewCell.key, for: indexPath) as? MainTableViewCell {
-            cell.backgroundColor = .red
+            cell.backgroundColor = .yellow
+            cell.setValue(name: "Name: \(employees[indexPath.row].name)",
+                          skills: "Skills: \(employees[indexPath.row].skills.joined(separator: "; "))",
+                          phone: "Phone: \(employees[indexPath.row].phoneNumber)")
             return cell
         }
         return UITableViewCell()
@@ -67,7 +90,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        "Company"
+        companyName
     }
 }
 
