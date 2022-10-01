@@ -78,10 +78,10 @@
 			children = (
 				94E748D328E5B82A00E8853F /* AppDelegate.swift */,
 				94E748D528E5B82A00E8853F /* SceneDelegate.swift */,
+				94E748F128E63C3800E8853F /* APIManager.swift */,
 				94E748E728E5B84700E8853F /* CompanyStruct.swift */,
 				94E748D728E5B82A00E8853F /* MainViewController.swift */,
 				94E748EB28E5C4A900E8853F /* MainTableViewCell.swift */,
-				94E748F128E63C3800E8853F /* APIManager.swift */,
 				94E748DC28E5B82E00E8853F /* Assets.xcassets */,
 				94E748DE28E5B82E00E8853F /* LaunchScreen.storyboard */,
 				94E748E128E5B82E00E8853F /* Info.plist */,

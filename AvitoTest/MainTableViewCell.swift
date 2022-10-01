@@ -20,20 +20,17 @@ class MainTableViewCell: UITableViewCell {
     }()
     private lazy var employeeNameLabel: UILabel = {
         let label = UILabel()
-        label.text = "name"
         label.numberOfLines = 0
         return label
     }()
     
     private lazy var employeePhoneLabel: UILabel = {
         let label = UILabel()
-        label.text = "phone"
         return label
     }()
     
     private lazy var employeeSkillsLabel: UILabel = {
         let label = UILabel()
-        label.text = "skills"
         return label
     }()
     
@@ -61,7 +58,6 @@ class MainTableViewCell: UITableViewCell {
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
 
-        // Configure the view for the selected state
     }
     
     private func updateViewConstraints() {
@@ -72,13 +68,11 @@ class MainTableViewCell: UITableViewCell {
         
         employeeNameLabel.snp.makeConstraints {
             $0.top.left.right.equalToSuperview().inset(10)
-
         }
         
         employeePhoneLabel.snp.makeConstraints {
             $0.left.right.equalToSuperview().inset(10)
             $0.top.equalTo(employeeNameLabel.snp.bottom).offset(10)
-
         }
         
         employeeSkillsLabel.snp.makeConstraints {
@@ -86,6 +80,12 @@ class MainTableViewCell: UITableViewCell {
             $0.top.equalTo(employeePhoneLabel.snp.bottom).offset(10)
             $0.bottom.equalToSuperview().inset(10)
         }
+    }
+    
+    func setValue(name: String, skills: String, phone: String ) {
+        employeeNameLabel.text = name
+        employeePhoneLabel.text = phone
+        employeeSkillsLabel.text = skills
     }
 
 }

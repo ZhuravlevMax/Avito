@@ -7,19 +7,12 @@
 
 import Foundation
 
-enum HttpMethod:String{
-    case get = "get"
-    case post = "post"
-}
-
-
-
 class APIManager {
     
     static let shared = APIManager()
     
-    //MARK: - метод для запроса текущей погоды
-    func getCompany(completion: ((Companies) -> Void)?) {
+    //MARK: - метод для запроса комании
+    func getCompany(completion: @escaping (Result<Companies,URLError>) -> Void) {
         
         let BaseURL : String = "https://run.mocky.io/v3/1d1cb4ec-73db-4762-8c4b-0b8aa3cecd4c"
         //url по которому будем получать данные
@@ -33,7 +26,7 @@ class APIManager {
             
             //Указываю тип контента json
             urlRequest.setValue("application/json", forHTTPHeaderField: "content-Type")
-
+            
             let dataTask = URLSession.shared.dataTask(with: urlRequest) { data, response, error in
                 
                 if let response = response {
@@ -41,12 +34,16 @@ class APIManager {
                 }
                 
                 if let data = data {
-                    let company = try! JSONDecoder().decode(Companies.self, from: data)
-                    completion?(company)
+                    do {
+                        let company = try JSONDecoder().decode(Companies.self, from: data)
+                        completion(.success(company))
+                    } catch {
+                        print("StructError")
+                    }
                 }
                 
-                if let error = error {
-                    print(error)
+                if let error = error as? URLError {
+                    completion(.failure(error))
                 }
             }
             dataTask.resume()

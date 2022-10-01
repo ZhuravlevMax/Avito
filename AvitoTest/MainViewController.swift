@@ -10,6 +10,23 @@ import SnapKit
 
 class MainViewController: UIViewController {
     
+    //MARK: - Creating variables
+    private var companyName: String = "" {
+        didSet {
+            DispatchQueue.main.async {
+                self.mainTableView.reloadData()
+            }
+        }
+    }
+    private var employees: [Employee] = [] {
+        didSet {
+            DispatchQueue.main.async {
+                self.mainTableView.reloadData()
+            }
+        }
+    }
+    private var skills: String?
+    
     //MARK: - Сreating items
     private lazy var mainTableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .grouped)
@@ -22,21 +39,48 @@ class MainViewController: UIViewController {
         
         return tableView
     }()
-
+    
     //MARK: - viewDidLoad
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = .gray
+        view.backgroundColor = .yellow
         
         //MARK: - Add items to display
         view.addSubview(mainTableView)
         updateViewConstraints()
-        APIManager.shared.getCompany { companies in
-            print (companies)
+        getData()
+    }
+    
+    private func getData() {
+        APIManager.shared.getCompany { [weak self] result in
+            guard let self = self else {return}
+            
+            switch result {
+            case .success( let company):
+                self.companyName = company.company.name
+                self.employees = company.company.employees.sorted(by: { $0.name < $1.name})
+                
+            case .failure( let error):
+                if error.code == URLError.notConnectedToInternet {
+                    print("NO tie")
+                    let alertController = UIAlertController(title: "Oops!", message: "Check your internet connection.", preferredStyle: .alert)
+                    let refreshButton = UIAlertAction(title: "Refresh", style: .default) {_ in
+                        self.getData()
+                        self.mainTableView.reloadData()
+                        
+                    }
+                    DispatchQueue.main.async {
+                        alertController.addAction(refreshButton)
+                        self.present(alertController, animated: true)
+                    }
+                    
+                }
+                
+            }
         }
     }
-
+    
     //MARK: - updateViewConstraints
     override func updateViewConstraints() {
         
@@ -46,17 +90,20 @@ class MainViewController: UIViewController {
         
         super.updateViewConstraints()
     }
-
+    
 }
 
 extension MainViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        4
+        employees.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if let cell = mainTableView.dequeueReusableCell(withIdentifier: MainTableViewCell.key, for: indexPath) as? MainTableViewCell {
-            cell.backgroundColor = .red
+            cell.backgroundColor = .white
+            cell.setValue(name: "Name: \(employees[indexPath.row].name)",
+                          skills: "Skills: \(employees[indexPath.row].skills.joined(separator: "; "))",
+                          phone: "Phone: \(employees[indexPath.row].phoneNumber)")
             return cell
         }
         return UITableViewCell()
@@ -67,7 +114,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        "Company"
+        companyName
     }
 }
 
