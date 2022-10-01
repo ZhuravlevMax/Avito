@@ -82,6 +82,7 @@ class MainTableViewCell: UITableViewCell {
         }
     }
     
+    //MARK: - Method for get data from MainVC
     func setValue(name: String, skills: String, phone: String ) {
         employeeNameLabel.text = name
         employeePhoneLabel.text = phone

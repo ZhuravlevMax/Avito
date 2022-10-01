@@ -50,8 +50,10 @@ class MainViewController: UIViewController {
         view.addSubview(mainTableView)
         updateViewConstraints()
         getData()
+        makeRefresher()
     }
     
+    //MARK: - Method for loading data
     private func getData() {
         APIManager.shared.getCompany { [weak self] result in
             guard let self = self else {return}
@@ -63,7 +65,7 @@ class MainViewController: UIViewController {
                 
             case .failure( let error):
                 if error.code == URLError.notConnectedToInternet {
-                    print("NO tie")
+                    print("No internet connection!")
                     let alertController = UIAlertController(title: "Oops!", message: "Check your internet connection.", preferredStyle: .alert)
                     let refreshButton = UIAlertAction(title: "Refresh", style: .default) {_ in
                         self.getData()
@@ -89,6 +91,20 @@ class MainViewController: UIViewController {
         }
         
         super.updateViewConstraints()
+    }
+    
+    //MARK: - Refresher for mainTableView
+    func makeRefresher() {
+        
+        let refresh = UIRefreshControl()
+        mainTableView.refreshControl = refresh
+        refresh.addTarget(self, action: #selector(refresher(sender: )), for: .valueChanged)
+    }
+    
+    @objc private func refresher(sender: UIRefreshControl) {
+        getData()
+        mainTableView.reloadData()
+        sender.endRefreshing()
     }
     
 }
