@@ -20,20 +20,17 @@ class MainTableViewCell: UITableViewCell {
     }()
     private lazy var employeeNameLabel: UILabel = {
         let label = UILabel()
-        label.text = "Loading data..."
         label.numberOfLines = 0
         return label
     }()
     
     private lazy var employeePhoneLabel: UILabel = {
         let label = UILabel()
-        label.text = "Loading data..."
         return label
     }()
     
     private lazy var employeeSkillsLabel: UILabel = {
         let label = UILabel()
-        label.text = "Loading data..."
         return label
     }()
     
@@ -61,7 +58,6 @@ class MainTableViewCell: UITableViewCell {
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
 
-        // Configure the view for the selected state
     }
     
     private func updateViewConstraints() {
