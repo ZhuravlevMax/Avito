@@ -48,7 +48,6 @@ class MainViewController: UIViewController {
         
         //MARK: - Add items to display
         view.addSubview(mainTableView)
-        
         updateViewConstraints()
         getData()
         makeRefresher()
@@ -56,13 +55,14 @@ class MainViewController: UIViewController {
     
     //MARK: - Method for loading data
     private func getData() {
-        APIManager.shared.downloadContent(fromUrlString: "https://run.mocky.io/v3/1d1cb4ec-73db-4762-8c4b-0b8aa3cecd4c") { result in
+        APIManager.shared.getCompany { [weak self] result in
+            guard let self = self else {return}
+            
             switch result {
-            case .success(let company):
-                print(company)
+            case .success( let company):
                 self.companyName = company.company.name
                 self.employees = company.company.employees.sorted(by: { $0.name < $1.name})
-
+                
             case .failure( let error):
                 if error.code == URLError.notConnectedToInternet {
                     print("No internet connection!")
@@ -70,47 +70,18 @@ class MainViewController: UIViewController {
                     let refreshButton = UIAlertAction(title: "Refresh", style: .default) {_ in
                         self.getData()
                         self.mainTableView.reloadData()
-
+                        
                     }
                     DispatchQueue.main.async {
                         alertController.addAction(refreshButton)
                         self.present(alertController, animated: true)
                     }
-
+                    
                 }
                 
             }
         }
     }
-    
-    //    private func getData() {
-    //        APIManager.shared.getCompany { [weak self] result in
-    //            guard let self = self else {return}
-    //
-    //            switch result {
-    //            case .success( let company):
-    //                self.companyName = company.company.name
-    //                self.employees = company.company.employees.sorted(by: { $0.name < $1.name})
-    //
-    //            case .failure( let error):
-    //                if error.code == URLError.notConnectedToInternet {
-    //                    print("No internet connection!")
-    //                    let alertController = UIAlertController(title: "Oops!", message: "Check your internet connection.", preferredStyle: .alert)
-    //                    let refreshButton = UIAlertAction(title: "Refresh", style: .default) {_ in
-    //                        self.getData()
-    //                        self.mainTableView.reloadData()
-    //
-    //                    }
-    //                    DispatchQueue.main.async {
-    //                        alertController.addAction(refreshButton)
-    //                        self.present(alertController, animated: true)
-    //                    }
-    //
-    //                }
-    //
-    //            }
-    //        }
-    //    }
     
     //MARK: - updateViewConstraints
     override func updateViewConstraints() {
