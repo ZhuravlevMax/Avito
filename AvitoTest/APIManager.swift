@@ -7,43 +7,75 @@
 
 import Foundation
 
+enum userDefaultsKeys {
+    case nextUpdate
+}
+
 class APIManager {
     
     static let shared = APIManager()
+    private let allowedDiskSize = 100 * 1024 * 1024
+    private lazy var cache: URLCache = {
+        return URLCache(memoryCapacity: 0, diskCapacity: allowedDiskSize, diskPath: "gifCache")
+    }()
+
+    typealias DownloadCompletionHandler = (Result<Companies, URLError>) -> Void
+    
+    private func createAndRetrieveURLSession() -> URLSession {
+        let sessionConfiguration = URLSessionConfiguration.default
+        sessionConfiguration.requestCachePolicy = .returnCacheDataElseLoad
+        sessionConfiguration.urlCache = cache
+        return URLSession(configuration: sessionConfiguration)
+    }
     
     //MARK: - Method for getting data
-    func getCompany(completion: @escaping (Result<Companies,URLError>) -> Void) {
+    func downloadContent(fromUrlString: String, completionHandler: @escaping DownloadCompletionHandler) {
         
-        let BaseURL : String = "https://run.mocky.io/v3/1d1cb4ec-73db-4762-8c4b-0b8aa3cecd4c"
+        var currentTime = Int(Date().timeIntervalSince1970)
+        var nextUpdateTime = UserDefaults.standard.integer(forKey: "\(userDefaultsKeys.nextUpdate)")
+        
+        if nextUpdateTime == 0 {
+            UserDefaults.standard.setValue(currentTime + 3600, forKey: "\(userDefaultsKeys.nextUpdate)")
+        }
 
-        if let url = URL(string: BaseURL) {
+        if currentTime > nextUpdateTime {
+            self.cache.removeAllCachedResponses()
+        }
 
-            var urlRequest = URLRequest(url: url)
+        if currentTime > nextUpdateTime {
+            UserDefaults.standard.setValue(currentTime + 3600, forKey: "\(userDefaultsKeys.nextUpdate)")
+        }
 
-            urlRequest.httpMethod = "GET"
- 
-            urlRequest.setValue("application/json", forHTTPHeaderField: "content-Type")
+        guard let downloadUrl = URL(string: fromUrlString) else { return }
+        let urlRequest = URLRequest(url: downloadUrl)
+        // First try to fetching cached data if exist
+        if let cachedData = self.cache.cachedResponse(for: urlRequest) {
+            print("Cached data in bytes:", cachedData.data)
+            do {
+                let company = try JSONDecoder().decode(Companies.self, from: cachedData.data)
+                completionHandler(.success(company))
+            } catch {
+                print("StructError")
+            }
             
-            let dataTask = URLSession.shared.dataTask(with: urlRequest) { data, response, error in
+        } else {
+            // No cached data, download content than cache the data
+            createAndRetrieveURLSession().dataTask(with: urlRequest) { (data, response, error) in
                 
-                if let response = response {
-                    print(response)
-                }
-                
-                if let data = data {
+                if let error = error as? URLError {
+                    completionHandler(.failure(error))
+                } else {
+                    guard let response = response, let data = data else {return}
+                    let cachedData = CachedURLResponse(response: response, data: data)
+                    self.cache.storeCachedResponse(cachedData, for: urlRequest)
                     do {
-                        let company = try JSONDecoder().decode(Companies.self, from: data)
-                        completion(.success(company))
+                        let company = try JSONDecoder().decode(Companies.self, from: cachedData.data)
+                        completionHandler(.success(company))
                     } catch {
                         print("StructError")
                     }
                 }
-                
-                if let error = error as? URLError {
-                    completion(.failure(error))
-                }
-            }
-            dataTask.resume()
+            }.resume()
         }
     }
     

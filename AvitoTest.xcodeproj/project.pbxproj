@@ -16,6 +16,7 @@
 		94E748E828E5B84700E8853F /* CompanyStruct.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94E748E728E5B84700E8853F /* CompanyStruct.swift */; };
 		94E748EC28E5C4A900E8853F /* MainTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94E748EB28E5C4A900E8853F /* MainTableViewCell.swift */; };
 		94E748F228E63C3800E8853F /* APIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94E748F128E63C3800E8853F /* APIManager.swift */; };
+		94E748F428E9EB0C00E8853F /* Int+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94E748F328E9EB0C00E8853F /* Int+Extension.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +31,7 @@
 		94E748E728E5B84700E8853F /* CompanyStruct.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyStruct.swift; sourceTree = "<group>"; };
 		94E748EB28E5C4A900E8853F /* MainTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTableViewCell.swift; sourceTree = "<group>"; };
 		94E748F128E63C3800E8853F /* APIManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIManager.swift; sourceTree = "<group>"; };
+		94E748F328E9EB0C00E8853F /* Int+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Int+Extension.swift"; sourceTree = "<group>"; };
 		CFD9AE6281C5452BED36F13C /* Pods-AvitoTest.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AvitoTest.debug.xcconfig"; path = "Target Support Files/Pods-AvitoTest/Pods-AvitoTest.debug.xcconfig"; sourceTree = "<group>"; };
 		F2A69D275436A59FF4C36344 /* Pods-AvitoTest.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AvitoTest.release.xcconfig"; path = "Target Support Files/Pods-AvitoTest/Pods-AvitoTest.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -79,6 +81,7 @@
 				94E748D328E5B82A00E8853F /* AppDelegate.swift */,
 				94E748D528E5B82A00E8853F /* SceneDelegate.swift */,
 				94E748F128E63C3800E8853F /* APIManager.swift */,
+				94E748F328E9EB0C00E8853F /* Int+Extension.swift */,
 				94E748E728E5B84700E8853F /* CompanyStruct.swift */,
 				94E748D728E5B82A00E8853F /* MainViewController.swift */,
 				94E748EB28E5C4A900E8853F /* MainTableViewCell.swift */,
@@ -214,6 +217,7 @@
 				94E748F228E63C3800E8853F /* APIManager.swift in Sources */,
 				94E748E828E5B84700E8853F /* CompanyStruct.swift in Sources */,
 				94E748D828E5B82A00E8853F /* MainViewController.swift in Sources */,
+				94E748F428E9EB0C00E8853F /* Int+Extension.swift in Sources */,
 				94E748D428E5B82A00E8853F /* AppDelegate.swift in Sources */,
 				94E748D628E5B82A00E8853F /* SceneDelegate.swift in Sources */,
 				94E748EC28E5C4A900E8853F /* MainTableViewCell.swift in Sources */,
