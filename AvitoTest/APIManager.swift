@@ -14,6 +14,7 @@ class APIManager {
     private lazy var cache: URLCache = {
         return URLCache(memoryCapacity: 0, diskCapacity: allowedDiskSize, diskPath: "gifCache")
     }()
+
     typealias DownloadCompletionHandler = (Result<Companies, URLError>) -> Void
     
     private func createAndRetrieveURLSession() -> URLSession {
@@ -23,7 +24,29 @@ class APIManager {
         return URLSession(configuration: sessionConfiguration)
     }
     
+    //MARK: - Method for getting data
     func downloadContent(fromUrlString: String, completionHandler: @escaping DownloadCompletionHandler) {
+        
+        var currentTime = Int(Date().timeIntervalSince1970)
+        var nextUpdateTime = UserDefaults.standard.integer(forKey: "nextUpdate")
+        
+        if nextUpdateTime == 0 {
+            UserDefaults.standard.setValue(currentTime + 60, forKey: "nextUpdate")
+        }
+        print(currentTime.decoderDt(format: "HH:mm:ss dd MMM YYYY"))
+        print(nextUpdateTime.decoderDt(format: "HH:mm:ss dd MMM YYYY"))
+        
+        if currentTime > nextUpdateTime {
+            self.cache.removeAllCachedResponses()
+        }
+        print(currentTime.decoderDt(format: "HH:mm:ss dd MMM YYYY"))
+        print(nextUpdateTime.decoderDt(format: "HH:mm:ss dd MMM YYYY"))
+        if currentTime > nextUpdateTime {
+            UserDefaults.standard.setValue(currentTime + 60, forKey: "nextUpdate")
+        }
+        
+        print(currentTime.decoderDt(format: "HH:mm:ss dd MMM YYYY"))
+        print(nextUpdateTime.decoderDt(format: "HH:mm:ss dd MMM YYYY"))
         
         guard let downloadUrl = URL(string: fromUrlString) else { return }
         let urlRequest = URLRequest(url: downloadUrl)
@@ -57,38 +80,6 @@ class APIManager {
             }.resume()
         }
     }
-    
-    //MARK: - Method for getting data
-    //    func getCompany(completion: @escaping DownloadCompletionHandler) {
-    //
-    //        let BaseURL : String = "https://run.mocky.io/v3/1d1cb4ec-73db-4762-8c4b-0b8aa3cecd4c"
-    //
-    //        guard let url = URL(string: BaseURL) else {return}
-    //
-    //        var urlRequest = URLRequest(url: url)
-    //
-    //        urlRequest.httpMethod = "GET"
-    //
-    //        urlRequest.setValue("application/json", forHTTPHeaderField: "content-Type")
-    //
-    //        let dataTask = URLSession.shared.dataTask(with: urlRequest) { data, response, error in
-    //
-    //            if let data = data {
-    //                do {
-    //                    let company = try JSONDecoder().decode(Companies.self, from: data)
-    //                    completion(.success(company))
-    //                } catch {
-    //                    print("StructError")
-    //                }
-    //            }
-    //
-    //            if let error = error as? URLError {
-    //                completion(.failure(error))
-    //            }
-    //        }
-    //        dataTask.resume()
-    //
-    //    }
     
 }
 
