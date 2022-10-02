@@ -7,6 +7,10 @@
 
 import Foundation
 
+enum userDefaultsKeys {
+    case nextUpdate
+}
+
 class APIManager {
     
     static let shared = APIManager()
@@ -28,26 +32,20 @@ class APIManager {
     func downloadContent(fromUrlString: String, completionHandler: @escaping DownloadCompletionHandler) {
         
         var currentTime = Int(Date().timeIntervalSince1970)
-        var nextUpdateTime = UserDefaults.standard.integer(forKey: "nextUpdate")
+        var nextUpdateTime = UserDefaults.standard.integer(forKey: "\(userDefaultsKeys.nextUpdate)")
         
         if nextUpdateTime == 0 {
-            UserDefaults.standard.setValue(currentTime + 60, forKey: "nextUpdate")
+            UserDefaults.standard.setValue(currentTime + 3600, forKey: "\(userDefaultsKeys.nextUpdate)")
         }
-        print(currentTime.decoderDt(format: "HH:mm:ss dd MMM YYYY"))
-        print(nextUpdateTime.decoderDt(format: "HH:mm:ss dd MMM YYYY"))
-        
+
         if currentTime > nextUpdateTime {
             self.cache.removeAllCachedResponses()
         }
-        print(currentTime.decoderDt(format: "HH:mm:ss dd MMM YYYY"))
-        print(nextUpdateTime.decoderDt(format: "HH:mm:ss dd MMM YYYY"))
+
         if currentTime > nextUpdateTime {
-            UserDefaults.standard.setValue(currentTime + 60, forKey: "nextUpdate")
+            UserDefaults.standard.setValue(currentTime + 3600, forKey: "\(userDefaultsKeys.nextUpdate)")
         }
-        
-        print(currentTime.decoderDt(format: "HH:mm:ss dd MMM YYYY"))
-        print(nextUpdateTime.decoderDt(format: "HH:mm:ss dd MMM YYYY"))
-        
+
         guard let downloadUrl = URL(string: fromUrlString) else { return }
         let urlRequest = URLRequest(url: downloadUrl)
         // First try to fetching cached data if exist
