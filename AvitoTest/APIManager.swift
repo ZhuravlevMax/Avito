@@ -31,8 +31,8 @@ class APIManager {
     //MARK: - Method for getting data
     func downloadContent(fromUrlString: String, completionHandler: @escaping DownloadCompletionHandler) {
         
-        var currentTime = Int(Date().timeIntervalSince1970)
-        var nextUpdateTime = UserDefaults.standard.integer(forKey: "\(userDefaultsKeys.nextUpdate)")
+        let currentTime = Int(Date().timeIntervalSince1970)
+        let nextUpdateTime = UserDefaults.standard.integer(forKey: "\(userDefaultsKeys.nextUpdate)")
         
         if nextUpdateTime == 0 {
             UserDefaults.standard.setValue(currentTime + 3600, forKey: "\(userDefaultsKeys.nextUpdate)")
