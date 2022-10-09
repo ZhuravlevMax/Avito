@@ -11,14 +11,21 @@ enum userDefaultsKeys {
     case nextUpdate
 }
 
-class APIManager {
+protocol NetworkServiceProtocol {
+    func downloadContent(fromUrlString: String,
+                         completionHandler: @escaping (Result<Companies, URLError>) -> Void)
+}
+
+class NetworkService: NetworkServiceProtocol {
     
-    static let shared = APIManager()
+    static let shared = NetworkService()
     private let allowedDiskSize = 100 * 1024 * 1024
     private lazy var cache: URLCache = {
-        return URLCache(memoryCapacity: 0, diskCapacity: allowedDiskSize, diskPath: "gifCache")
+        return URLCache(memoryCapacity: 0,
+                        diskCapacity: allowedDiskSize,
+                        diskPath: "gifCache")
     }()
-
+    
     typealias DownloadCompletionHandler = (Result<Companies, URLError>) -> Void
     
     private func createAndRetrieveURLSession() -> URLSession {
@@ -29,21 +36,24 @@ class APIManager {
     }
     
     //MARK: - Method for getting data
-    func downloadContent(fromUrlString: String, completionHandler: @escaping DownloadCompletionHandler) {
+    func downloadContent(fromUrlString: String,
+                         completionHandler: @escaping DownloadCompletionHandler) {
         
         var currentTime = Int(Date().timeIntervalSince1970)
         var nextUpdateTime = UserDefaults.standard.integer(forKey: "\(userDefaultsKeys.nextUpdate)")
         
         if nextUpdateTime == 0 {
-            UserDefaults.standard.setValue(currentTime + 3600, forKey: "\(userDefaultsKeys.nextUpdate)")
+            UserDefaults.standard.setValue(currentTime + 30,
+                                           forKey: "\(userDefaultsKeys.nextUpdate)")
         }
-
+        
         if currentTime > nextUpdateTime {
             self.cache.removeAllCachedResponses()
         }
-
+        
         if currentTime > nextUpdateTime {
-            UserDefaults.standard.setValue(currentTime + 3600, forKey: "\(userDefaultsKeys.nextUpdate)")
+            UserDefaults.standard.setValue(currentTime + 30,
+                                           forKey: "\(userDefaultsKeys.nextUpdate)")
         }
 
         guard let downloadUrl = URL(string: fromUrlString) else { return }
@@ -52,7 +62,8 @@ class APIManager {
         if let cachedData = self.cache.cachedResponse(for: urlRequest) {
             print("Cached data in bytes:", cachedData.data)
             do {
-                let company = try JSONDecoder().decode(Companies.self, from: cachedData.data)
+                let company = try JSONDecoder().decode(Companies.self,
+                                                       from: cachedData.data)
                 completionHandler(.success(company))
             } catch {
                 print("StructError")
